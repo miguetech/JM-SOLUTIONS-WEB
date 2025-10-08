@@ -9,11 +9,9 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:4000
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     depends_on:
       - backend
+    privileged: true
 
   backend:
     build:
@@ -24,24 +22,9 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
-      - DATABASE_URL=postgresql://jm_admin:password@postgres:5432/jm_solutions
-      - JWT_SECRET=${JWT_SECRET}
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    depends_on:
-      - postgres
-
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_USER=jm_admin
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=jm_solutions
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+      - DATABASE_URL=postgresql://jm_admin:jmS0lut1ons2024!SecureDB@host.docker.internal:5433/jm_solutions
+      - JWT_SECRET=jm-solutions-super-secret-key-2024
+      - JWT_EXPIRES_IN=7d
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    privileged: true
