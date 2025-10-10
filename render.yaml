@@ -4,6 +4,7 @@ services:
     name: jm-solutions-backend
     runtime: node
     region: oregon
+    # ... (resto de la configuración del backend) ...
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
     envVars:
@@ -26,15 +27,15 @@ services:
 
 
   # Frontend Static Site (Next.js 14 - Static Export)
-  - type: static # <- El tipo correcto es 'static'.
+  - type: static # <- DEBE ESTAR ALINEADO PERFECTAMENTE con '- type: web'
     name: jm-solutions-frontend-web
-    rootDir: frontend # <- Explicitamos la carpeta raíz del proyecto frontend.
-    buildCommand: npm install && npm run build 
+    rootDir: frontend 
+    # Comando de instalación mejorado para manejar el subdirectorio:
+    buildCommand: cd frontend && npm install && npm run build 
     staticPublishPath: out 
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        # Usamos la URL pública completa del backend.
-        value: https://jm-solutions-backend.onrender.com 
+        value: https://jm-solutions-backend.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
         value: https://gimxbdzkcgtxfwogwsrn.supabase.co
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
