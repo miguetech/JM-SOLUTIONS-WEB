@@ -11,6 +11,8 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:4000
     depends_on:
       - backend
+    networks:
+      - jm-solutions-network
     privileged: true
 
   backend:
@@ -25,6 +27,14 @@ services:
       - DATABASE_URL=postgresql://jm_admin:jmS0lut1ons2024!SecureDB@host.docker.internal:5433/jm_solutions
       - JWT_SECRET=jm-solutions-super-secret-key-2024
       - JWT_EXPIRES_IN=7d
+      - SCRAPER_SERVICE_URL=http://jm-solutions-lead-scraper:8000
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - jm-solutions-network
     privileged: true
+
+networks:
+  jm-solutions-network:
+    external: true
+    name: jm-solutions-network
