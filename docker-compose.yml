@@ -28,6 +28,7 @@ services:
       - JWT_SECRET=jm-solutions-super-secret-key-2024
       - JWT_EXPIRES_IN=7d
       - SCRAPER_SERVICE_URL=http://jm-solutions-lead-scraper:8000
+      - IA_SERVICE_URL=http://jm-solutions-ia-service:8001
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:

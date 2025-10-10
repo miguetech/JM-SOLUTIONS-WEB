@@ -107,6 +107,106 @@ class IAService {
   }
 
   async getAgentsStatus(): Promise<AgentsStatusResponse> {
+    try {
+      const response = await this.makeRequest('/agents/status');
+      
+      // Transform the response from the IA service
+      if (response.agents && typeof response.agents === 'object') {
+        const agentsArray = Object.entries(response.agents).map(([id, data]: [string, any]) => ({
+          id,
+          name: this.getAgentName(id),
+          description: this.getAgentDescription(id),
+          status: data.status === 'idle' ? 'stopped' : data.status,
+          enabled: data.status !== 'idle',
+          tasks_completed: data.tasks_completed || 0,
+          cost_today: data.cost_today || 0,
+          last_activity: data.last_activity || 'N/A'
+        }));
+
+        return {
+          system: {
+            status: agentsArray.some(a => a.status === 'running') ? 'running' : 'stopped',
+            active_agents: agentsArray.filter(a => a.status === 'running').length,
+            total_tasks: agentsArray.reduce((sum, a) => sum + a.tasks_completed, 0),
+            uptime: '0:00:00'
+          },
+          agents: agentsArray
+        };
+      }
+
+      throw new Error('Invalid response format');
+    } catch (error) {
+      console.error('Error getting IA agents status:', error);
+      return this.getMockAgentsStatus();
+    }
+  }
+
+  private getAgentName(id: string): string {
+    const names: Record<string, string> = {
+      'database_search': 'Búsqueda en Base de Datos',
+      'lead_qualification': 'Calificación de Leads',
+      'outreach': 'Alcance y Contacto',
+      'web_research': 'Investigación Web',
+      'customer_service': 'Servicio al Cliente'
+    };
+    return names[id] || id;
+  }
+
+  private getAgentDescription(id: string): string {
+    const descriptions: Record<string, string> = {
+      'database_search': 'Busca y filtra información en la base de datos',
+      'lead_qualification': 'Califica y prioriza leads automáticamente',
+      'outreach': 'Gestiona campañas de alcance y seguimiento',
+      'web_research': 'Investiga información en la web',
+      'customer_service': 'Atiende consultas de clientes'
+    };
+    return descriptions[id] || 'Agente de IA';
+  }
+
+  private getMockAgentsStatus(): AgentsStatusResponse {
+    return {
+      system: {
+        status: 'stopped',
+        active_agents: 0,
+        total_tasks: 0,
+        uptime: '0:00:00'
+      },
+      agents: [
+        {
+          id: 'lead-analyzer',
+          name: 'Analizador de Leads',
+          description: 'Analiza y califica leads automáticamente',
+          status: 'stopped',
+          enabled: false,
+          tasks_completed: 0,
+          cost_today: 0,
+          last_activity: 'N/A'
+        },
+        {
+          id: 'content-generator',
+          name: 'Generador de Contenido',
+          description: 'Genera contenido personalizado para outreach',
+          status: 'stopped',
+          enabled: false,
+          tasks_completed: 0,
+          cost_today: 0,
+          last_activity: 'N/A'
+        },
+        {
+          id: 'opportunity-scorer',
+          name: 'Calificador de Oportunidades',
+          description: 'Evalúa el potencial de cada oportunidad de negocio',
+          status: 'stopped',
+          enabled: false,
+          tasks_completed: 0,
+          cost_today: 0,
+          last_activity: 'N/A'
+        }
+      ]
+    };
+  }
+
+  async getAgentsStatus_old(): Promise<AgentsStatusResponse> {
     return this.makeRequest('/agents/status');
   }
 
@@ -242,6 +342,33 @@ class IAService {
         message: 'Error al limpiar los logs'
       };
     }
+  }
+
+  async getAgentConfig(agentId: string): Promise<any> {
+    return this.makeRequest(`/agents/${agentId}/config`);
+  }
+
+  async updateAgentConfig(agentId: string, config: any): Promise<{ success: boolean; message: string }> {
+    try {
+      await this.makeRequest(`/agents/${agentId}/config`, {
+        method: 'PUT',
+        data: config,
+      });
+      
+      return {
+        success: true,
+        message: 'Configuración actualizada correctamente'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Error al actualizar la configuración'
+      };
+    }
+  }
+
+  async getAllConfigs(): Promise<any> {
+    return this.makeRequest('/agents/configs/all');
   }
 
   async getHealth(): Promise<{ status: string; message: string }> {

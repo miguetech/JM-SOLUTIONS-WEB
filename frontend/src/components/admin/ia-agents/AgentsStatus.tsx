@@ -13,9 +13,11 @@ import {
   RefreshCw, 
   AlertCircle,
   CheckCircle,
-  Activity
+  Activity,
+  Settings
 } from 'lucide-react';
 import { iaService, type AgentStatus } from '@/services/ia.service';
+import { AgentConfigModal } from './AgentConfigModal';
 
 export function AgentsStatus() {
   const [agents, setAgents] = useState<AgentStatus[]>([]);
@@ -25,6 +27,17 @@ export function AgentsStatus() {
     active_agents: 0,
     total_tasks: 0,
     uptime: ''
+  });
+  const [configModal, setConfigModal] = useState<{
+    isOpen: boolean;
+    agentId: string;
+    agentName: string;
+    config: any;
+  }>({
+    isOpen: false,
+    agentId: '',
+    agentName: '',
+    config: null
   });
 
   useEffect(() => {
@@ -75,6 +88,38 @@ export function AgentsStatus() {
       await fetchStatus();
     } catch (error) {
       console.error('Error toggling agent:', error);
+    }
+  };
+
+  const handleOpenConfig = async (agentId: string, agentName: string) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/admin/ia/agents/${agentId}/config`);
+      const data = await response.json();
+      setConfigModal({
+        isOpen: true,
+        agentId,
+        agentName,
+        config: data.config
+      });
+    } catch (error) {
+      console.error('Error loading agent config:', error);
+    }
+  };
+
+  const handleSaveConfig = async (agentId: string, config: any) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/admin/ia/agents/${agentId}/config`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+      });
+      
+      if (response.ok) {
+        await fetchStatus();
+      }
+    } catch (error) {
+      console.error('Error saving agent config:', error);
+      throw error;
     }
   };
 
@@ -201,6 +246,15 @@ export function AgentsStatus() {
                       />
                       <Label className="text-sm">Activo</Label>
                     </div>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleOpenConfig(agent.id, agent.name)}
+                      className="border-secondary-dark hover:bg-secondary-dark"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))
@@ -208,6 +262,15 @@ export function AgentsStatus() {
           </div>
         </CardContent>
       </Card>
+
+      <AgentConfigModal
+        agentId={configModal.agentId}
+        agentName={configModal.agentName}
+        isOpen={configModal.isOpen}
+        onClose={() => setConfigModal({ ...configModal, isOpen: false })}
+        onSave={handleSaveConfig}
+        initialConfig={configModal.config}
+      />
     </div>
   );
 }

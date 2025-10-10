@@ -56,35 +56,35 @@ export interface CompleteDashboardData {
 export const adminService = {
   // Get complete dashboard data in one call
   async getCompleteDashboardData(): Promise<CompleteDashboardData> {
-    return api.get('/admin/dashboard/complete');
+    return api.get('/api/admin/dashboard/complete');
   },
 
   // Individual endpoints for specific data
   async getDashboardMetrics(): Promise<DashboardMetrics> {
-    return api.get('/admin/dashboard/metrics');
+    return api.get('/api/admin/dashboard/metrics');
   },
 
   async getLeadTrends(): Promise<LeadTrend[]> {
-    return api.get('/admin/dashboard/trends');
+    return api.get('/api/admin/dashboard/trends');
   },
 
   async getLeadsByNiche(): Promise<NicheData[]> {
-    return api.get('/admin/dashboard/niche');
+    return api.get('/api/admin/dashboard/niche');
   },
 
   async getRecentActivity(): Promise<Activity[]> {
-    return api.get('/admin/dashboard/activity');
+    return api.get('/api/admin/dashboard/activity');
   },
 
   async getScraperStatus(): Promise<ScraperStatus> {
-    return api.get('/admin/scraper/status');
+    return api.get('/api/admin/scraper/status');
   },
 
   async getDatabaseStats() {
-    return api.get('/admin/database/stats');
+    return api.get('/api/admin/database/stats');
   },
 
   async getCompanies() {
-    return api.get('/admin/companies');
+    return api.get('/api/admin/companies');
   },
 };

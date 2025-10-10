@@ -114,4 +114,37 @@ export class IAController {
       res.status(500).json({ error: 'Error retrieving IA health' });
     }
   }
+
+  async getAgentConfig(req: Request, res: Response) {
+    try {
+      const { agentId } = req.params;
+      const config = await iaService.getAgentConfig(agentId);
+      res.json(config);
+    } catch (error) {
+      console.error('Error getting agent config:', error);
+      res.status(500).json({ error: 'Error retrieving agent configuration' });
+    }
+  }
+
+  async updateAgentConfig(req: Request, res: Response) {
+    try {
+      const { agentId } = req.params;
+      const config = req.body;
+      const result = await iaService.updateAgentConfig(agentId, config);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating agent config:', error);
+      res.status(500).json({ error: 'Error updating agent configuration' });
+    }
+  }
+
+  async getAllConfigs(req: Request, res: Response) {
+    try {
+      const configs = await iaService.getAllConfigs();
+      res.json(configs);
+    } catch (error) {
+      console.error('Error getting all configs:', error);
+      res.status(500).json({ error: 'Error retrieving configurations' });
+    }
+  }
 }

@@ -49,6 +49,9 @@ router.get('/ia/costs', iaController.getCosts);
 router.get('/ia/logs', iaController.getLogs);
 router.delete('/ia/logs/clear', iaController.clearLogs);
 router.get('/ia/health', iaController.getHealth);
+router.get('/ia/agents/:agentId/config', iaController.getAgentConfig);
+router.put('/ia/agents/:agentId/config', iaController.updateAgentConfig);
+router.get('/ia/agents/configs/all', iaController.getAllConfigs);
 
 // Database Analytics Routes
 router.get('/database/stats', getDatabaseStats);
