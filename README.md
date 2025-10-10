@@ -2,82 +2,141 @@
 
 **Work smart, not harder**
 
-Plataforma web principal de JM Solutions que integra sitio público y dashboard administrativo para gestión de leads, campañas y agentes IA.
+Main web platform for JM Solutions integrating public site and administrative dashboard for lead management, campaigns, and AI agents.
 
-## 🚀 Inicio Rápido
+## 🚀 Quick Start
 
-### Prerrequisitos
+### Prerequisites
 - Node.js 18+
-- Docker y Docker Compose
-- PostgreSQL 15 (o usar Docker)
+- Docker and Docker Compose
+- PostgreSQL 15 (or use Docker)
+- Access to microservices: Scraper and IA
 
-### Instalación
+### Installation
 
-1. Clonar el repositorio
+1. Clone the repository
 ```bash
 cd JM-SOLUTIONS-WEB
 ```
 
-2. Configurar variables de entorno
+2. Configure environment variables
 ```bash
 cp .env.example .env
-# Editar .env con tus credenciales
+# Edit .env with your credentials
 ```
 
-3. Instalar dependencias
-```bash
-# Backend
-cd backend
-npm install
-
-# Frontend
-cd ../frontend
-npm install
-```
-
-4. Iniciar con Docker
+3. Start with Docker
 ```bash
 docker-compose up -d
 ```
 
-O iniciar manualmente:
-```bash
-# Backend (terminal 1)
-cd backend
-npm run dev
-
-# Frontend (terminal 2)
-cd frontend
-npm run dev
-```
-
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 JM-SOLUTIONS-WEB/
-├── frontend/          # Next.js + React + TypeScript
-├── backend/           # Express + Node.js + TypeScript
-├── docker-compose.yml # Orquestación de servicios
-└── CLAUDE.md         # Documentación técnica completa
+├── frontend/              # Next.js + React + TypeScript
+│   ├── src/app/admin/    # Administrative dashboard
+│   ├── src/components/   # Reusable components
+│   └── src/services/     # API services
+├── backend/              # Express + Node.js + TypeScript
+│   ├── src/controllers/  # Route controllers
+│   ├── src/services/     # Business logic
+│   └── src/routes/       # Route definitions
+├── docker-compose.yml    # Service orchestration
+└── CLAUDE.md            # Complete technical documentation
 ```
 
 ## 🌐 URLs
 
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:4000
+- **Admin Dashboard**: http://localhost:3000/admin
 - **PostgreSQL**: localhost:5433
 
-## 📚 Documentación
+## 🎯 Features
 
-Ver [CLAUDE.md](./CLAUDE.md) para documentación técnica completa.
+### Administrative Dashboard
+- **Overview**: General metrics, trends, and recent activity
+- **Scraper Management**: Lead scraper control and monitoring
+  - Start/stop scraping sessions
+  - Configure parameters (location, categories, limits)
+  - Real-time progress monitoring
+  - Session history
+- **IA Agents**: AI agent management
+  - Individual agent status and control
+  - System prompt and parameter configuration
+  - Cost and token usage monitoring
+  - Activity logs
+- **Database**: Data visualization and analysis
+  - Companies and opportunities
+  - Statistics and metrics
 
-## 🛠️ Tecnologías
+## 🔗 Microservice Integration
 
-- **Frontend**: React, Next.js, TypeScript, Tailwind CSS, Shadcn/ui
-- **Backend**: Node.js, Express, TypeScript, JWT, Passport.js
-- **Base de Datos**: PostgreSQL 15 con pgvector
-- **Infraestructura**: Docker, Docker Compose
+### Scraper Service
+- **URL**: http://jm-solutions-lead-scraper:8000
+- **Functions**: Google Maps lead search and scraping
+- **Endpoints**: `/api/v1/jobs`, `/api/v1/jobs/{job_id}`
 
-## 📄 Licencia
+### IA Service
+- **URL**: http://jm-solutions-ia-service:8001
+- **Functions**: CrewAI agents for analysis and automation
+- **Endpoints**: `/agents/status`, `/agents/{id}/config`, `/logs`
 
-Propiedad de JM Solutions © 2024
+## 🛠️ Technologies
+
+### Frontend
+- React 18 + Next.js 14
+- TypeScript
+- Tailwind CSS
+- Shadcn/ui components
+- Lucide icons
+
+### Backend
+- Node.js 18 + Express
+- TypeScript
+- JWT Authentication
+- Axios for microservice communication
+
+### Database
+- PostgreSQL 15 with pgvector
+- Prisma ORM (optional)
+
+### Infrastructure
+- Docker + Docker Compose
+- Network: jm-solutions-network
+
+## 📚 Documentation
+
+See [CLAUDE.md](./CLAUDE.md) for complete technical documentation.
+
+## 🔧 Development
+
+### Service Structure
+```typescript
+// Frontend services
+- adminService: Dashboard metrics and analytics
+- scraperService: Scraper control
+- iaService: AI agent management
+
+// Backend services
+- admin.service: Metrics and statistics
+- scraper.service: Proxy to scraper microservice
+- ia.service: Proxy to IA microservice
+```
+
+### Environment Variables
+```env
+# Backend
+DATABASE_URL=postgresql://user:pass@host:5433/db
+JWT_SECRET=your-secret-key
+SCRAPER_SERVICE_URL=http://jm-solutions-lead-scraper:8000
+IA_SERVICE_URL=http://jm-solutions-ia-service:8001
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+## 📄 License
+
+Property of JM Solutions © 2024
