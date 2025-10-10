@@ -3,7 +3,6 @@ services:
   - type: web
     name: jm-solutions-backend
     runtime: node
-    plan: starter
     region: oregon
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
@@ -11,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 4000
+        value: 10000
       # Supabase PostgreSQL Direct Connection
       - key: DATABASE_URL
         value: postgresql://postgres:JMSOLUTIONS-123456@db.gimxbdzkcgtxfwogwsrn.supabase.co:5432/postgres
@@ -28,24 +27,14 @@ services:
     healthCheckPath: /health
     autoDeploy: true
 
-  # Frontend Service (Next.js 14)
-  - type: web
-    name: jm-solutions-frontend
-    runtime: node
-    plan: starter
-    region: oregon
+  # Frontend Static Site (Next.js 14 - Static Export)
+  - type: static
+    name: jm-solutions-frontend-web
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
+    staticPublishPath: frontend/out
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 3000
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          name: jm-solutions-backend
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://jm-solutions-backend.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
         value: https://gimxbdzkcgtxfwogwsrn.supabase.co
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
