@@ -28,7 +28,7 @@ services:
     autoDeploy: true
 
   # Frontend Static Site (Next.js 14 - Static Export)
-  - type: static
+  - type: static_site
     name: jm-solutions-frontend-web
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/out
