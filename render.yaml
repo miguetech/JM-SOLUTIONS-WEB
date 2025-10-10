@@ -1,0 +1,53 @@
+services:
+  # Backend API Service (Express + TypeScript)
+  - type: web
+    name: jm-solutions-backend
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      # Supabase PostgreSQL Direct Connection
+      - key: DATABASE_URL
+        value: postgresql://postgres:JMSOLUTIONS-123456@db.gimxbdzkcgtxfwogwsrn.supabase.co:5432/postgres
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ADMIN_SESSION_TIMEOUT
+        value: 3600000
+      - key: SUPABASE_URL
+        value: https://gimxbdzkcgtxfwogwsrn.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbXhiZHprY2d0eGZ3b2d3c3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MzE2MjUsImV4cCI6MjA3NDMwNzYyNX0.AhO9wKFfpKImBmaI3nDQXOWE_nf1mIo4v55CknfLoAU
+    healthCheckPath: /health
+    autoDeploy: true
+
+  # Frontend Service (Next.js 14)
+  - type: web
+    name: jm-solutions-frontend
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: jm-solutions-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://gimxbdzkcgtxfwogwsrn.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbXhiZHprY2d0eGZ3b2d3c3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MzE2MjUsImV4cCI6MjA3NDMwNzYyNX0.AhO9wKFfpKImBmaI3nDQXOWE_nf1mIo4v55CknfLoAU
+    autoDeploy: true
