@@ -4,7 +4,6 @@ services:
     name: jm-solutions-backend
     runtime: node
     region: oregon
-    # ... (resto de la configuración del backend) ...
     buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
     envVars:
@@ -25,15 +24,18 @@ services:
     healthCheckPath: /health
     autoDeploy: true
 
-
-  # Frontend Static Site (Next.js 14 - Static Export)
-  - type: static # <- DEBE ESTAR ALINEADO PERFECTAMENTE con '- type: web'
-    name: jm-solutions-frontend-web
-    rootDir: frontend 
-    # Comando de instalación mejorado para manejar el subdirectorio:
-    buildCommand: cd frontend && npm install && npm run build 
-    staticPublishPath: out 
+  # Frontend Web Service (Next.js 14)
+  - type: web
+    name: jm-solutions-frontend
+    runtime: node
+    region: oregon
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
     envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
       - key: NEXT_PUBLIC_API_URL
         value: https://jm-solutions-backend.onrender.com
       - key: NEXT_PUBLIC_SUPABASE_URL
