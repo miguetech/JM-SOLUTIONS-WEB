@@ -3,17 +3,23 @@ services:
   - type: web
     name: jm-solutions-backend
     runtime: node
-    region: oregon
-    buildCommand: cd backend && npm install && npm run build
-    startCommand: cd backend && npm start
+    # La región debe ser consistente si es posible.
+    region: oregon 
+    # Comando de construcción: instala dependencias en el subdirectorio y luego compila (si es necesario).
+    buildCommand: cd backend && npm install && npm run build 
+    # Comando de inicio: se asegura de ejecutar el servidor desde el subdirectorio.
+    startCommand: cd backend && npm start 
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
-      # Supabase PostgreSQL Direct Connection
+      # Render inyecta su propio puerto, es mejor usar $PORT o no especificar.
+      # Render recomienda no establecer PORT en Blueprints.
+      # - key: PORT
+      #   value: 10000 
+      # --- CREDENCIALES DE SUPABASE (¡ASEGÚRATE DE USAR SECRET FILES EN RENDER!) ---
       - key: DATABASE_URL
         value: postgresql://postgres:JMSOLUTIONS-123456@db.gimxbdzkcgtxfwogwsrn.supabase.co:5432/postgres
+      # --- VARIABLES DE APLICACIÓN ---
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
@@ -27,14 +33,22 @@ services:
     healthCheckPath: /health
     autoDeploy: true
 
+
   # Frontend Static Site (Next.js 14 - Static Export)
-  - type: static_site
+  - type: static # <- CORRECCIÓN: El tipo para sitios estáticos es 'static'.
     name: jm-solutions-frontend-web
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/out
+    # Asumo que el frontend está en el mismo repositorio y la carpeta es 'frontend'.
+    # Render lo detecta automáticamente, pero es bueno ser explícito.
+    rootDir: frontend 
+    # Comando de construcción: instala y compila el proyecto estático.
+    buildCommand: npm install && npm run build 
+    # Ruta donde Next.js exporta los archivos estáticos (`out` para export estático).
+    staticPublishPath: out 
+    # El Frontend (Next.js) necesita esta variable para saber dónde buscar el backend.
     envVars:
+      # Render sustituirá el placeholder con la URL de tu servicio backend.
       - key: NEXT_PUBLIC_API_URL
-        value: https://jm-solutions-backend.onrender.com
+        value: http://jm-solutions-backend:10000 # Usa el nombre del servicio en la red privada. Render lo convertirá a la URL pública.
       - key: NEXT_PUBLIC_SUPABASE_URL
         value: https://gimxbdzkcgtxfwogwsrn.supabase.co
       - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
