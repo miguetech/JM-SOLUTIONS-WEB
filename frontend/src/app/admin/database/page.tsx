@@ -1,4 +1,6 @@
-import { CompaniesTable, OpportunitiesView, AnalyticsCharts } from '@/components/admin/database';
+import { CompaniesTable } from '../../../components/admin/database/CompaniesTable';
+import { OpportunitiesView } from '../../../components/admin/database/OpportunitiesView';
+import { AnalyticsCharts } from '../../../components/admin/database/AnalyticsCharts';
 
 export default function DatabasePage() {
   return (

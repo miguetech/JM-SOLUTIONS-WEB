@@ -1,4 +1,6 @@
-import { AgentsStatus, CostMonitor, AgentLogs } from '@/components/admin/ia-agents';
+import { AgentsStatus } from '../../../components/admin/ia-agents/AgentsStatus';
+import { CostMonitor } from '../../../components/admin/ia-agents/CostMonitor';
+import { AgentLogs } from '../../../components/admin/ia-agents/AgentLogs';
 
 export default function IAAgentsPage() {
   return (
